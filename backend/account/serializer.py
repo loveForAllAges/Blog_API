@@ -19,3 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'password')
+
+    def create(self, validated_data):
+        # password = validated_data.pop('password')
+        instance = self.Meta.model.objects.create_user(**validated_data)
+        # instance.
+        return instance
