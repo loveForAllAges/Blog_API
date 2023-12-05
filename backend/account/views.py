@@ -3,11 +3,13 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
-from django.conf import settings
+from .serializer import UserSerializer
+from .models import User
 
 
-class UserListAPIView(generics.ListAPIView):
-    queryset = settings
+class UserListAPIView(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class CustomAuthToken(ObtainAuthToken):

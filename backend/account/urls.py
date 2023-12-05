@@ -3,5 +3,6 @@ from .views import *
 
 
 urlpatterns = [
-    path('login', CustomAuthToken.as_view())
+    path('login', CustomAuthToken.as_view()),
+    path('users', UserListAPIView.as_view())
 ]
