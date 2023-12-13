@@ -3,7 +3,7 @@ from .views import *
 
 
 urlpatterns = [
-    path('auth/', include('rest_framework.urls')),
-    path('login', CustomAuthToken.as_view()),
+    path('login', LoginAPIView.as_view()),
+    path('signup', SignupAPIView.as_view()),
     path('users', UserListAPIView.as_view())
 ]
