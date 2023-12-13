@@ -3,6 +3,12 @@
 API для блога
 
 ## Документация
+
+Markdown | Less | Pretty
+--- | --- | ---
+*Still* | `renders` | **nicely**
+1 | 2 | 3
+
 * `/api/login`
 
 ['POST'] Авторизация. Получение токена доступа.
