@@ -1,9 +1,12 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework. permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 
-from .models import Blog
-from .serializer import BlogSerializer
+from .models import Blog, Tag
+from .serializers import BlogSerializer, TagSerializer
+from .pagination import CustomCursorPagination
+from .utils import get_tags, get_users
 
 
 class BlogViewSet(viewsets.ModelViewSet):
@@ -15,3 +18,28 @@ class BlogViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Blog.objects.filter(user=self.request.user)
         return queryset
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    # TODO Only admins can manage tags
+
+
+class HomeListAPIView(generics.ListAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    pagination_class = CustomCursorPagination
+
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+
+    #     page = self.paginate_queryset(queryset)
+    #     serializer = self.get_serializer(page, many=True)
+    #     data = {
+    #         'next': self.paginator.get_next_link(),
+    #         'blogs': serializer.data,
+    #         'authors': get_users(),
+    #         'get_tags': get_tags(),
+    #     }
+    #     return Response(data)
