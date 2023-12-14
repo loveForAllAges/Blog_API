@@ -28,3 +28,18 @@ class UserAPIView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all().prefetch_related('blogs')
     serializer_class = UserDetailSeralizer
     lookup_field = 'username'
+
+    def update(self, request, *args, **kwargs):
+        res = {'message': 'Ошибка.'}
+        if request.user.is_authenticated:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            if request.user == instance:
+                serializer = self.get_serializer(instance, data=request.data, partial=partial)
+                serializer.is_valid(raise_exception=True)
+                self.perform_update(serializer)
+
+                if getattr(instance, '_prefetched_objects_cache', None):
+                    instance._prefetched_objects_cache = {}
+                res = serializer.data
+        return Response(res)
