@@ -1,9 +1,9 @@
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework import views, generics
+from rest_framework import views, generics, status, permissions
 
-from .serializers import UserDetailSeralizer, SignupSerializer
+from .serializers import UserDetailSerializer, SignupSerializer
 
 from django.contrib.auth import get_user_model
 
@@ -13,6 +13,15 @@ User = get_user_model()
 
 class LoginAPIView(ObtainAuthToken):
     pass
+
+
+class LogoutAPIView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        print(request.user.auth_token)
+        request.user.auth_token.delete()
+        return Response({'message': 'Вы вышли из системы.'}, status=status.HTTP_200_OK)
 
 
 class SignupAPIView(views.APIView):
@@ -26,7 +35,7 @@ class SignupAPIView(views.APIView):
 
 class UserAPIView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all().prefetch_related('blogs')
-    serializer_class = UserDetailSeralizer
+    serializer_class = UserDetailSerializer
     lookup_field = 'username'
 
     def update(self, request, *args, **kwargs):

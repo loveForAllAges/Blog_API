@@ -26,14 +26,17 @@ class SignupSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UserDetailSeralizer(serializers.HyperlinkedModelSerializer):
+class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='user', lookup_field='username')
     blogs = BlogSerializer(read_only=True, many=True)
+    password = serializers.CharField(write_only=True, max_length=128)
 
     class Meta:
         model = User
-        exclude = ('password',)
+        fields = '__all__'
 
     def update(self, instance, validated_data):
-        print(instance, validated_data)
+        password = validated_data.pop('password', None)
+        if password:
+            instance.set_password(password)
         return super().update(instance, validated_data)
