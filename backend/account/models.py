@@ -31,10 +31,6 @@ class User(AbstractBaseUser):
         max_length=64, 
         unique=True, 
         validators=[validate_username],
-        error_messages={
-            'unique': 'Имя пользователя занято.',
-            'blank': 'Это обязательное поле.',
-        }
     )
     last_login = None
     USERNAME_FIELD = 'username'

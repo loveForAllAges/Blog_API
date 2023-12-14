@@ -3,9 +3,10 @@ from rest_framework.validators import UniqueValidator
 
 from .models import User
 from .validators import validate_username
+from blog.serializers import BlogSerializer
 
 
-class UserSerializer(serializers.ModelSerializer):
+class SignupSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         validators=[validate_username, UniqueValidator(User.objects.all(), 'Имя пользователя занято.')],
         error_messages={
@@ -21,7 +22,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username', 'password')
 
     def create(self, validated_data):
-        # password = validated_data.pop('password')
         instance = self.Meta.model.objects.create_user(**validated_data)
-        # instance.
         return instance
+
+
+class UserDetailSeralizer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='user', lookup_field='username')
+    blogs = BlogSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = User
+        exclude = ('password',)
+
+    def update(self, instance, validated_data):
+        print(instance, validated_data)
+        return super().update(instance, validated_data)

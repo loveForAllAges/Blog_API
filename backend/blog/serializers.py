@@ -1,6 +1,11 @@
 from rest_framework import serializers
 
+from django.contrib.auth import get_user_model
+
 from .models import Blog, Tag
+
+
+User = get_user_model()
     
 
 class TagSerializer(serializers.ModelSerializer):
@@ -9,12 +14,21 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='user', lookup_field='username')
+
+    class Meta:
+        model = User
+        exclude = ('password',)
+
+
 class BlogSerializer(serializers.HyperlinkedModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True, allow_empty=False)
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Blog
-        fields = ('title', 'content', 'tags', 'url')
+        fields = ('title', 'content', 'updated', 'tags', 'user')
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')

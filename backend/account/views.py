@@ -1,9 +1,14 @@
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework import views
+from rest_framework import views, generics
 
-from .serializers import UserSerializer
+from .serializers import UserDetailSeralizer, SignupSerializer
+
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class LoginAPIView(ObtainAuthToken):
@@ -12,8 +17,14 @@ class LoginAPIView(ObtainAuthToken):
 
 class SignupAPIView(views.APIView):
     def post(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
+        serializer = SignupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key})
+
+
+class UserAPIView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all().prefetch_related('blogs')
+    serializer_class = UserDetailSeralizer
+    lookup_field = 'username'

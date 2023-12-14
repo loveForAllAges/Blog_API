@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from .models import Blog, Tag
 from .serializers import BlogSerializer, TagSerializer
 from .pagination import CustomCursorPagination
-from .utils import get_tags, get_users
 
 
 class BlogViewSet(viewsets.ModelViewSet):
@@ -20,16 +19,17 @@ class BlogViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagListAPIView(generics.ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    # TODO Only admins can manage tags
 
 
 class HomeListAPIView(generics.ListAPIView):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
     pagination_class = CustomCursorPagination
+    # TODO ПОИСК, СОРТИРОВКА ПО ТЕГАМ
+
 
     # def list(self, request, *args, **kwargs):
     #     queryset = self.filter_queryset(self.get_queryset())
