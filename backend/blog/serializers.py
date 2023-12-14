@@ -28,7 +28,8 @@ class BlogSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Blog
-        fields = ('title', 'content', 'updated', 'tags', 'user')
+        exclude = ('created', )
+        # fields = ('title', 'content', 'updated', 'tags', 'user')
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')

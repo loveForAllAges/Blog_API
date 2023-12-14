@@ -6,11 +6,10 @@ from .views import *
 
 
 router = DefaultRouter()
-router.register(r'blog', BlogViewSet, basename='blog')
+router.register(r'', BlogViewSet, basename='blog')
 
 
 urlpatterns = [
-    path('home', HomeListAPIView.as_view()),
     path('tags', TagListAPIView.as_view()),
     path('', include(router.urls)),
 ]
